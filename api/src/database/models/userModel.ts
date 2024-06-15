@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, model } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
 interface IUser extends Document {
   name: string;
@@ -7,14 +7,14 @@ interface IUser extends Document {
   created_at: Date;
 }
 
-class UserClass extends mongoose.Model {
+class UserClass extends mongoose.Model<IUser> {
   name!: string;
   email!: string;
   password!: string;
   created_at!: Date;
 }
 
-const userSchema = new Schema<IUser>({
+const userSchema = new mongoose.Schema<IUser>({
   name: {
     type: String,
     required: true
@@ -35,5 +35,6 @@ const userSchema = new Schema<IUser>({
 
 userSchema.loadClass(UserClass);
 
-const User = model<IUser, typeof UserClass>('User', userSchema);
-export default User;
+const UserModel = mongoose.model<IUser>('users', userSchema);
+
+export default UserModel;
