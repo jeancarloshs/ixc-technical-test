@@ -41,6 +41,12 @@ class UserController {
         try {
             const { password, ...userData } = req.body;
             const passwordMD5 = md5(password);
+            const checkEmail = await UserModel.find({ email: userData.email });
+
+            if (checkEmail.length > 0) {
+                return res.status(409).json({ message: `${userData.email} already exists` });
+            }
+
             const newUser = new UserModel({ ...userData, password: passwordMD5 });
             await newUser.save();
             return res.status(201).send(newUser);
