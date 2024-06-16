@@ -1,0 +1,12 @@
+{
+    "scripts": {
+        "install": "concurrently \"cd api && npm install\" \"cd web && npm install\"",
+        "dev": "concurrently \"cd api && npm run dev\" \"cd web && npm run dev\"",
+        "build": "concurrently \"cd api && npm run build\" \"cd web && npm run build\"",
+        "start": "concurrently \"cd api && npm start\" \"cd web && npm start\"",
+        "lint": "concurrently \"cd api && npm run lint\" \"cd web && npm run lint\""
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    }
+}
