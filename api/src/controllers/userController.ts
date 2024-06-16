@@ -15,7 +15,7 @@ class UserController {
 
             const passwordMD5 = md5(password);
             if (passwordMD5 !== getUser.password) {
-                return res.status(401).json({ message: 'Invalid email or password' });
+                return res.json({ message: 'Invalid email or password' });
             }
             const payload = {
                 userID: getUser._id
