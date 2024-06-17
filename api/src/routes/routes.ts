@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
-import usersRoutes from './users.Routes'
+import usersRoutes from './users.Routes';
+import chatRoutes from './chat.Routes';
 
 const routes = (app: any) => {
   app.get('/', (req: Request, res: Response) => {
@@ -8,6 +9,7 @@ const routes = (app: any) => {
 
   app.use(express.json(),
     usersRoutes,
+    chatRoutes
   )
 }
 
