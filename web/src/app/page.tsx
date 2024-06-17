@@ -18,9 +18,9 @@ export default function Home() {
   const [stayConnected, setStayConnected] = useState<boolean>(false);
 
   useEffect(() => {
-    const storedStayConnected = localStorage.getItem("stayConnected");
+    const storedStayConnected = sessionStorage.getItem("stayConnected");
     if (storedStayConnected == null || storedStayConnected == undefined) {
-      localStorage.setItem("stayConnected", false.toString());
+      sessionStorage.setItem("stayConnected", false.toString());
     }
   }, []);
 
@@ -38,7 +38,7 @@ export default function Home() {
       );
 
       if (loginResponse.message != 'Invalid email or password') {
-        localStorage.setItem("token", loginResponse.objAuth.token);
+        sessionStorage.setItem("token", loginResponse.objAuth.token);
         // console.log("Login clicked with:", loginResponse.objAuth.token);
         router.push("./chat");
       } else {
@@ -55,7 +55,7 @@ export default function Home() {
 
   const handleStayConnected = (event: ChangeEvent<HTMLInputElement>) => {
     setStayConnected(!event.target.checked);
-    localStorage.setItem("stayConnected", stayConnected.toString());
+    sessionStorage.setItem("stayConnected", stayConnected.toString());
     console.log(stayConnected);
   };
 

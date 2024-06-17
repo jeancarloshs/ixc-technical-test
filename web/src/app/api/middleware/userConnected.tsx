@@ -9,7 +9,7 @@ export interface DecodedToken {
 }
 
 export default function decodeToken() {
-  const token = localStorage.getItem("token") as string;
+  const token = sessionStorage.getItem("token") as string;
 
   const decodeToken: DecodedToken = jwtDecode(token);
 

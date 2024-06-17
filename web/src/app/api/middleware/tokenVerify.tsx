@@ -6,7 +6,7 @@ export default function tokenVerify() {
     const [token, setToken] = useState<String | null>(null);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem("token") as string;
         setToken(token);
         if (!token) {
             router.push('/');
