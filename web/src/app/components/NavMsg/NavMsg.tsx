@@ -12,7 +12,7 @@ class NavMsg extends Component<INavMsg> {
     const { userName, userEmail, userAvatar, active} = this.props;
     return (
       <nav>
-        <div className="max-w-screen h-[75px] flex flex-wrap items-center justify-between mx-auto pl-4">
+        <div className="max-w-screen h-[75px] flex flex-wrap items-center justify-between mx-auto pl-4 z-40">
           <div className="pr-5">
             <p className="font-semibold">
               {userName ?? "Nome do Usuário"}

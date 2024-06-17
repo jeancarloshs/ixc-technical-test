@@ -7,17 +7,19 @@ interface IMessage {
   email?: string;
   text?: string;
   isOwner?: boolean;
-  key?: string | undefined;
+  key?: number | undefined;
 }
 
 class Message extends Component<IMessage> {
   render() {
     const { msgID, userID, name, email, text, isOwner, key } = this.props;
-    return <div className={`m-2 pr-3 flex w-1/6 h-auto ${isOwner && "self-end bg-[#3282D7]"}`} key={msgID}>
+    return (
+      <div className={`m-2 pr-3 flex w-1/6 h-auto ${isOwner && "self-end bg-[#3282D7]"}`} key={key}>
         <div className="mr-4 flex flex-col items-center">
-            <span className="text-black">{text}</span>
+          <span className="text-black">{text}</span>
         </div>
-    </div>;
+      </div>
+    );
   }
 }
 
