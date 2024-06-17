@@ -17,8 +17,11 @@ class UserController {
             if (passwordMD5 !== getUser.password) {
                 return res.json({ message: 'Invalid email or password' });
             }
+
             const payload = {
-                userID: getUser._id
+                userID: getUser._id,
+                name: getUser.name,
+                email: getUser.email
             }
 
             const token = jwt.sign(payload);
