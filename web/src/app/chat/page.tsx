@@ -1,14 +1,88 @@
 "use client";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Container from "../components/Container/Container";
+import Message from "../components/Message/Message";
+import { socket } from "../socket";
+import Button from "../components/Button/Button";
+import decodeToken from "../api/middleware/userConnected";
+import { v4 as uuid } from "uuid";
+
+interface IMessage {
+  msgID?: string;
+  userID?: number;
+  name?: string;
+  email?: string;
+  text?: string;
+  isOwner?: boolean;
+}
 
 export default function Page() {
-  const getToken = localStorage.getItem("token");
+  // const [socketInstance, setSocketInstance] = useState(socket());
+  const [socketInstance] = useState(socket());
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<IMessage[]>([]);
   const router = useRouter();
+  const userInfoToken = decodeToken();
 
-  if (!getToken) {
-		router.push("/");
-  }
+  useEffect(() => {
+    const getToken = localStorage.getItem("token");
+
+    if (!getToken) {
+      router.push("/");
+    } else {
+      socketInstance.connect();
+    }
+
+    const handleMessage = (message: any) => {
+      // console.log("message received", message);
+      setMessages((previous) => [...previous, message]);
+    };
+
+    socketInstance.on("message", handleMessage);
+
+    return () => {
+      socketInstance.off("message", handleMessage);
+      socketInstance.disconnect();
+    };
+  }, [router, socketInstance]);
+
+  const handleChangeTextArea = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setMessage(event.target.value);
+  };
+
+  const handleSubmit = () => {
+    // event.preventDefault();
+
+    const newMessage = {
+      msgID: uuid(),
+      userID: userInfoToken?.id,
+      name: userInfoToken?.userName,
+      email: userInfoToken?.userEmail,
+      text: message,
+    };
+
+    if (message.trim() !== "") {
+      socketInstance.emit("message", newMessage);
+      setMessages((previous) => [
+        ...previous,
+        { ...newMessage, isOwner: true },
+      ]);
+      console.log("Message sent", newMessage);
+      setMessage("");
+    }
+  };
+
+  console.log("Message sent", messages);
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      handleSubmit();
+    }
+  };
 
   return (
     <>
@@ -20,8 +94,12 @@ export default function Page() {
                 <p className="text-black font-bold">Mensagens</p>
               </div>
               <div className="pr-5">
-                <p className="font-semibold">nome Usuario</p>
-                <p className="text-[#868B8E]">email Usuario</p>
+                <p className="font-semibold">
+                  {userInfoToken?.userName ?? "Nome do Usuário"}
+                </p>
+                <p className="text-[#868B8E] text-[12px]">
+                  {userInfoToken?.userEmail ?? "Email do Usuário"}
+                </p>
               </div>
             </div>
           </nav>
@@ -44,17 +122,40 @@ export default function Page() {
               <nav>
                 <div className="max-w-screen h-[75px] flex flex-wrap items-center justify-between mx-auto pl-4">
                   <div className="pr-5">
-                    <p className="font-semibold">nome Usuario</p>
-                    <p className="text-[#868B8E]">Online</p>
+                    <p className="font-semibold">
+                      {userInfoToken?.userName ?? "Nome do Usuário"}
+                    </p>
+                    <p className="text-[#868B8E] text-[12px]">
+                      {socketInstance.active ? "Online" : "Offline"}
+                    </p>
                   </div>
                 </div>
               </nav>
               <section className="bg-[#F5F5F5] h-[599px] rounded-br-[20px] flex flex-col justify-end">
-                <div className="w-full flex justify-center mb-4">
+                {messages.map((message) => (
+                  <Message
+                    key={message.msgID}
+                    isOwner={true}
+                    text={message.text}
+                  ></Message>
+                ))}
+                <div className="relative w-full flex justify-center mb-4">
                   <textarea
+                    onChange={handleChangeTextArea}
+                    onKeyDown={handleKeyDown}
+                    value={message}
                     className="resize-none w-11/12 h-[100px] p-2 rounded-md border border-[#E2E2E2] focus:outline-none"
                     placeholder="Digite sua mensagem aqui"
                   ></textarea>
+                  <Button
+                    name="Enviar"
+                    id="registerBtn"
+                    type="submit"
+                    onClick={handleSubmit}
+                    className="absolute right-[45px] bottom-3 w-[75px] h-[50px] text-black font-semibold rounded-md bg-slate-100 hover:bg-slate-200 flex items-center justify-center"
+                  >
+                    Enviar -&gt;
+                  </Button>
                 </div>
               </section>
             </div>

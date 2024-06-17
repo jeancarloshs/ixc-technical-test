@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Input from "./components/Input/Input";
 import Button from "./components/Button/Button";
 import Container from "./components/Container/Container";
@@ -40,15 +39,15 @@ export default function Home() {
 
       if (loginResponse.message != 'Invalid email or password') {
         localStorage.setItem("token", loginResponse.objAuth.token);
-        console.log("Login clicked with:", loginResponse.objAuth.token);
+        // console.log("Login clicked with:", loginResponse.objAuth.token);
         router.push("./chat");
       } else {
         setErrorMessage(loginResponse.message);
-        console.log(loginResponse.message);
+        // console.log(loginResponse.message);
       }
 
     } catch (error) {
-      console.log("An error occurred during the login process.")
+      // console.log("An error occurred during the login process.")
       // setErrorMessage("An error occurred during the login process.");
       console.error("Login failed:", error);
     }

@@ -59,6 +59,16 @@ class UserController {
         }
     }
 
+    static getAllUsers = async (req: Request, res: Response) => {
+        try {
+            const getAllUsers = await UserModel.find();
+            return res.status(200).json(getAllUsers);
+        } catch (error) {
+            console.error('Error getting users:', error.message);
+            return res.status(500).json({ message: 'Failed to get users. Please try again later.' });
+        }
+    }
+
     static userUpdate = async (req: Request, res: Response) => {
 
     }
