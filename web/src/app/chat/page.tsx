@@ -8,6 +8,8 @@ import Button from "../components/Button/Button";
 import decodeToken from "../api/middleware/userConnected";
 import { v4 as uuid } from "uuid";
 import usersService from "../api/services/users.Service";
+import UserNav from "../components/UserNav/UserNav";
+import NavMsg from "../components/NavMsg/NavMsg";
 
 interface IMessage {
   msgID?: string;
@@ -124,21 +126,10 @@ export default function Page() {
     <>
       <Container>
         <div className="w-5/6 h-[750px] bg-white rounded-[20px]">
-          <nav className="border-b border-[#F2F2F2]">
-            <div className="max-w-screen h-[75px] flex flex-wrap items-center justify-between mx-auto">
-              <div className="px-5">
-                <p className="text-black font-bold">Mensagens</p>
-              </div>
-              <div className="pr-5">
-                <p className="font-semibold">
-                  {userInfoToken?.userName ?? "Nome do Usuário"}
-                </p>
-                <p className="text-[#868B8E] text-[12px]">
-                  {userInfoToken?.userEmail ?? "Email do Usuário"}
-                </p>
-              </div>
-            </div>
-          </nav>
+          <UserNav
+            userName={userInfoToken?.userName}
+            userEmail={userInfoToken?.userEmail}
+          />
           <div className="flex">
             <aside className="z-40 w-[400px] h-[674px] rounded-bl-[17px] border-r boder-[#F2F2F2] sm:translate-x-0 bg-white flex flex-col items-center overflow-auto">
               {userLists.length > 0 ? (
@@ -173,18 +164,10 @@ export default function Page() {
               </div>
             </aside>
             <div className="w-screen">
-              <nav>
-                <div className="max-w-screen h-[75px] flex flex-wrap items-center justify-between mx-auto pl-4">
-                  <div className="pr-5">
-                    <p className="font-semibold">
-                      {userInfoToken?.userName ?? "Nome do Usuário"}
-                    </p>
-                    <p className="text-[#868B8E] text-[12px]">
-                      {socketInstance.active ? "Online" : "Offline"}
-                    </p>
-                  </div>
-                </div>
-              </nav>
+              <NavMsg
+                userName={userInfoToken?.userName}
+                active={socketInstance.active}
+              />
               <section className="bg-[#F5F5F5] h-[599px] rounded-br-[20px] flex flex-col justify-end">
                 {messages.map((message) => (
                   <Message
