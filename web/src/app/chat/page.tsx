@@ -10,6 +10,7 @@ import { v4 as uuid } from "uuid";
 import usersService from "../api/services/users.Service";
 import UserNav from "../components/UserNav/UserNav";
 import NavMsg from "../components/NavMsg/NavMsg";
+import tokenVerify from "../api/middleware/tokenVerify";
 
 interface IMessage {
   msgID?: string;
@@ -21,7 +22,7 @@ interface IMessage {
 }
 
 interface IUserLists {
-  userID?: string;
+  _id: string;
   name?: string;
   email?: string;
 }
@@ -32,36 +33,38 @@ export default function Page() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [userLists, setUserLists] = useState<IUserLists[]>([]);
+  const [currentRoom, setCurrentRoom] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>("");
   const [error, setError] = useState<string | null>(null);
+  const [userRoom, setUserRoom] = useState<string | null>("");
+  const [userIsConnected, setUserIsConnected] = useState(false);
   const router = useRouter();
   const userInfoToken = decodeToken();
 
-  // const getUserLists = async () => {
-  //   const userList = await usersService(token);
-  //   setUserLists(userList);
-  //   // return userList;
-  // };
-
   useEffect(() => {
-    const getToken = localStorage.getItem("token") as string;
-    setToken(getToken);
-    // getUserLists();
-    if (!getToken) {
+    const storedToken = sessionStorage.getItem("token");
+
+    if (!storedToken) {
       router.push("/");
-    } else {
-      socketInstance.connect();
+      return;
     }
 
-    const handleMessage = (message: any) => {
-      // console.log("message received", message);
-      // setMessages((previous) => [...previous, message]); ENVIANDO 2 VEZES QUANDO ATIVO
-    };
+    setToken(storedToken);
 
-    socketInstance.on("message", handleMessage);
+    socketInstance.connect();
+
+    socketInstance.on("message", (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+      console.log("Message received", message);
+    });
+
+    socketInstance.on("room-users", (users) => {
+      console.log("Users in room:", users);
+    });
 
     return () => {
-      socketInstance.off("message", handleMessage);
+      socketInstance.off("message");
+      socketInstance.off("room-users");
       socketInstance.disconnect();
     };
   }, [router, socketInstance]);
@@ -85,41 +88,49 @@ export default function Page() {
     return <div>{error}</div>;
   }
 
-  const handleChangeTextArea = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
+  const handleChangeTextArea = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(event.target.value);
   };
 
   const handleSubmit = () => {
-    // event.preventDefault();
+    if (currentRoom) {
+      const newMessage = {
+        msgID: uuid(),
+        userID: userInfoToken?.id,
+        name: userInfoToken?.userName,
+        email: userInfoToken?.userEmail,
+        text: message,
+      };
 
-    const newMessage = {
-      msgID: uuid(),
-      userID: userInfoToken?.id,
-      name: userInfoToken?.userName,
-      email: userInfoToken?.userEmail,
-      text: message,
-    };
-
-    if (message.trim() !== "") {
-      socketInstance.emit("message", newMessage);
-      setMessages((previous) => [
-        ...previous,
-        { ...newMessage, isOwner: true },
-      ]);
-      console.log("Message sent", newMessage);
-      setMessage("");
+      if (message.trim() !== "") {
+        socketInstance.emit("new-message", currentRoom, newMessage);
+        setMessages((previous) => [
+          ...previous,
+          { ...newMessage, isOwner: true },
+        ]);
+        console.log("Message sent", newMessage);
+        setMessage("");
+      }
+    } else {
+      console.error("No room selected. Message not sent.");
     }
   };
-
-  // console.log("Message sent", userList);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       handleSubmit();
     }
+  };
+
+  const joinRoom = (room: string) => {
+    console.log("Joining Room:", room);
+    setCurrentRoom(room);
+    socketInstance.emit("join-room", room, {
+      name: userInfoToken?.userName,
+      email: userInfoToken?.userEmail,
+    });
+    setMessages([]);
   };
 
   return (
@@ -133,12 +144,24 @@ export default function Page() {
           <div className="flex">
             <aside className="z-40 w-[400px] h-[674px] rounded-bl-[17px] border-r boder-[#F2F2F2] sm:translate-x-0 bg-white flex flex-col items-center overflow-auto">
               {userLists.length > 0 ? (
-                userLists.map((userList) => {
+                userLists.map((userList, index) => {
+                  // {
+                  //   userList._id !== userInfoToken?.id.toString() ? () : (null)
+                  // }
                   return (
-                    <div className="bg-[#CDE6F5] w-10/12 h-[75px] rounded-[20px] mt-[20px]">
+                    <div
+                      className="bg-[#CDE6F5] w-10/12 h-[75px] rounded-[20px] mt-[20px] hover:cursor-pointer"
+                      key={index}
+                      onClick={() => {
+                        setUserRoom(userList.name!);
+                        setUserIsConnected(socketInstance.active);
+                        joinRoom(userList._id)
+                      }
+                      }
+                    >
                       <div className="flex flex-col mt-[20px] ml-[20px]">
                         <p className="font-semibold">{userList.name}</p>
-                        <p className="text-[#ADB9C6]">ultima msg</p>
+                        <p className="text-[#ADB9C6] text-[14px]">ultima msg</p>
                       </div>
                     </div>
                   );
@@ -150,7 +173,7 @@ export default function Page() {
                   </div>
                 </div>
               )}
-              <div className="bg-[#CDE6F5] w-10/12 h-[75px] rounded-[20px] mt-[20px]">
+              {/* <div className="bg-[#CDE6F5] w-10/12 h-[75px] rounded-[20px] mt-[20px]">
                 <div className="flex flex-col mt-[20px] ml-[20px]">
                   <p className="font-semibold">Nome</p>
                   <p className="text-[#ADB9C6]">ultima msg</p>
@@ -161,21 +184,24 @@ export default function Page() {
                   <p className="font-semibold">Nome</p>
                   <p className="text-[#ADB9C6]">ultima msg</p>
                 </div>
-              </div>
+              </div> */}
             </aside>
             <div className="w-screen">
               <NavMsg
-                userName={userInfoToken?.userName}
-                active={socketInstance.active}
+                userName={userRoom ?? userInfoToken?.userName}
+                // active={socketInstance.active}
+                active={userIsConnected}
               />
               <section className="bg-[#F5F5F5] h-[599px] rounded-br-[20px] flex flex-col justify-end">
-                {messages.map((message) => (
-                  <Message
-                    key={message.msgID}
-                    isOwner={true}
-                    text={message.text}
-                  ></Message>
-                ))}
+                <div className={`overflow-auto`}>
+                  {messages.map((message, index) => (
+                    <Message
+                      key={index}
+                      isOwner={message.userID === userInfoToken?.id}
+                      text={message.text}
+                    />
+                  ))}
+                </div>
                 <div className="relative w-full flex justify-center mb-4">
                   <textarea
                     onChange={handleChangeTextArea}
