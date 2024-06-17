@@ -7,6 +7,7 @@ import { socket } from "../socket";
 import Button from "../components/Button/Button";
 import decodeToken from "../api/middleware/userConnected";
 import { v4 as uuid } from "uuid";
+import usersService from "../api/services/users.Service";
 
 interface IMessage {
   msgID?: string;
@@ -17,17 +18,33 @@ interface IMessage {
   isOwner?: boolean;
 }
 
+interface IUserLists {
+  userID?: string;
+  name?: string;
+  email?: string;
+}
+
 export default function Page() {
   // const [socketInstance, setSocketInstance] = useState(socket());
   const [socketInstance] = useState(socket());
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<IMessage[]>([]);
+  const [userLists, setUserLists] = useState<IUserLists[]>([]);
+  const [token, setToken] = useState<string | null>("");
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const userInfoToken = decodeToken();
 
-  useEffect(() => {
-    const getToken = localStorage.getItem("token");
+  // const getUserLists = async () => {
+  //   const userList = await usersService(token);
+  //   setUserLists(userList);
+  //   // return userList;
+  // };
 
+  useEffect(() => {
+    const getToken = localStorage.getItem("token") as string;
+    setToken(getToken);
+    // getUserLists();
     if (!getToken) {
       router.push("/");
     } else {
@@ -36,7 +53,7 @@ export default function Page() {
 
     const handleMessage = (message: any) => {
       // console.log("message received", message);
-      setMessages((previous) => [...previous, message]);
+      // setMessages((previous) => [...previous, message]); ENVIANDO 2 VEZES QUANDO ATIVO
     };
 
     socketInstance.on("message", handleMessage);
@@ -46,6 +63,25 @@ export default function Page() {
       socketInstance.disconnect();
     };
   }, [router, socketInstance]);
+
+  useEffect(() => {
+    const fetchUserLists = async () => {
+      if (token) {
+        try {
+          const userList = await usersService(token);
+          setUserLists(userList);
+        } catch (error) {
+          setError("An error occurred while fetching the user list");
+        }
+      }
+    };
+
+    fetchUserLists();
+  }, [token]);
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   const handleChangeTextArea = (
     event: React.ChangeEvent<HTMLTextAreaElement>
@@ -75,7 +111,7 @@ export default function Page() {
     }
   };
 
-  console.log("Message sent", messages);
+  // console.log("Message sent", userList);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -104,7 +140,25 @@ export default function Page() {
             </div>
           </nav>
           <div className="flex">
-            <aside className="z-40 w-[400px] h-[674px] rounded-bl-[17px] border-r boder-[#F2F2F2] sm:translate-x-0 bg-white flex flex-col items-center">
+            <aside className="z-40 w-[400px] h-[674px] rounded-bl-[17px] border-r boder-[#F2F2F2] sm:translate-x-0 bg-white flex flex-col items-center overflow-auto">
+              {userLists.length > 0 ? (
+                userLists.map((userList) => {
+                  return (
+                    <div className="bg-[#CDE6F5] w-10/12 h-[75px] rounded-[20px] mt-[20px]">
+                      <div className="flex flex-col mt-[20px] ml-[20px]">
+                        <p className="font-semibold">{userList.name}</p>
+                        <p className="text-[#ADB9C6]">ultima msg</p>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="bg-[#CDE6F5] w-10/12 h-[75px] rounded-[20px] mt-[20px]">
+                  <div className="flex flex-col mt-[20px] ml-[20px]">
+                    <p className="font-semibold">Nenhum Usuário encontrado</p>
+                  </div>
+                </div>
+              )}
               <div className="bg-[#CDE6F5] w-10/12 h-[75px] rounded-[20px] mt-[20px]">
                 <div className="flex flex-col mt-[20px] ml-[20px]">
                   <p className="font-semibold">Nome</p>
