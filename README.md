@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Desafio para Dev Back-End - IXC Soft
 
-First, run the development server:
+Este repositório contém o desafio de programação proposto para a vaga de Desenvolvedor Backend Pleno na IXC Soft. O objetivo deste desafio é avaliar suas habilidades técnicas e conhecimentos em desenvolvimento de software, especialmente voltados para o backend.
+
+### Descrição do Desafio
+O desafio consiste em desenvolver uma aplicação Full-Stack utilizando NodeJS Express e React/NextJS, que seja capaz de realizar as seguintes funcionalidades:
+
+
+
+
+## Considerações sobre o desafio
+* O prazo para entrega da solução é de 3 dias corridos, contados a partir da data de recebimento do desafio.
+* Utilização das seguintes linguagens NodeJS Express e React/NextJS
+
+
+## Funcionalidades
+
+- Tela de Login para Autenticação dos usuários
+- Tela de Cadastro para novos Usuarios
+- Utilizar o banco de dados MongoDB
+- Funcionalidade de macro para troca de mensagens em tempo real
+## Instalação
+
+Para instalar as dependencias
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+  npm install
 ```
+Para rodar em modo dev
+```bash
+  npm run dev
+```
+## Variáveis de Ambiente
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Inserir o IP Local com a porta do serviço back-end que estara rodando localmente
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+`NEXT_PUBLIC_URL_API`
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Aprendizados
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+O que você aprendeu construindo esse projeto? Quais desafios você enfrentou e como você superou-os?
 
-## Deploy on Vercel
+Nesse projeto consegui melhorar a minha skil de front-end, no sentindo de ser um desafio trabalhar com o front. Nesse Projeto consegui melhorar na utilização do NextJS, também na utilização de roteamento de rotas dele, no react consegui trabalhar na parte de hooks, states e useEffect, por mais que seja um framework front-end com varias lib's prontas para uso, também consegui desenvolver na parte de websocket, utilizando Socket.IO, nunca havia trabalhado com ele, foi um tremendo desafio, fiquei preso na mesma função por mais de 1 dia, por não ter o conhecimento necessario para utilizar ele da melhor maneira
+## Stack utilizada
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Front-end:** React, NextJS, TailwindCSS
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+**Back-end:** Node, Express, Socket.io
+
+
+## Autores
+
+- [@jeancarloshs](https://www.github.com/jeancarloshs)
+
