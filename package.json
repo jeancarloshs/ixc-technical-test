@@ -11,6 +11,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.6.0",
     "date-fns": "^3.6.0",
+    "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "next": "14.2.4",
     "react": "^18",
@@ -21,6 +22,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/next": "^9.0.0",
     "@types/node": "^20",
     "@types/react": "^18",

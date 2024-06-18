@@ -5,6 +5,7 @@ import Input from "./components/Input/Input";
 import Button from "./components/Button/Button";
 import Container from "./components/Container/Container";
 import loginService from "./api/services/login.Service";
+import Cookies from 'js-cookie';
 
 export default function Home() {
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function Home() {
   const [stayConnected, setStayConnected] = useState<boolean>(false);
 
   useEffect(() => {
-    const storedStayConnected = sessionStorage.getItem("stayConnected");
+    const storedStayConnected = Cookies.get("stayConnected");
     if (storedStayConnected == null || storedStayConnected == undefined) {
       sessionStorage.setItem("stayConnected", false.toString());
     }

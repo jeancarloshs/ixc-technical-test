@@ -12,6 +12,7 @@ import UserNav from "../components/UserNav/UserNav";
 import NavMsg from "../components/NavMsg/NavMsg";
 import postMessageService from "../api/services/postMessage.Service";
 import getMessageService from "../api/services/getMessage.Service";
+import Cookies from 'js-cookie';
 
 interface IMessage {
   msgID?: string;
@@ -47,7 +48,7 @@ export default function Page() {
   const overflowRef = useRef(null);
 
   useEffect(() => {
-    const storedToken = sessionStorage.getItem("token") as string;
+    const storedToken = Cookies.get("token");
 
     if (!storedToken) {
       router.push("/");

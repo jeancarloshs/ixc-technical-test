@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import Cookies from 'js-cookie';
 
 export interface DecodedToken {
   userID: number;
@@ -9,7 +10,7 @@ export interface DecodedToken {
 }
 
 export default function decodeToken() {
-  const token = sessionStorage.getItem("token") as string;
+  const token = Cookies.get("token") as string;
 
   const decodeToken: DecodedToken = jwtDecode(token);
 
