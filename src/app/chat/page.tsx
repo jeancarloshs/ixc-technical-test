@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Container from "../components/Container/Container";
 import Message from "../components/Message/Message";
@@ -10,14 +10,20 @@ import { v4 as uuid } from "uuid";
 import usersService from "../api/services/users.Service";
 import UserNav from "../components/UserNav/UserNav";
 import NavMsg from "../components/NavMsg/NavMsg";
+import postMessageService from "../api/services/postMessage.Service";
+import tokenVerify from "../api/middleware/tokenVerify";
+import getMessageService from "../api/services/getMessage.Service";
 
 interface IMessage {
   msgID?: string;
   userID?: number;
   name?: string;
   email?: string;
+  sendToID?: string;
+  receivedID?: string;
   text?: string;
   isOwner?: boolean;
+  timestamp?: Date | any;
 }
 
 interface IUserLists {
@@ -36,8 +42,10 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [userRoom, setUserRoom] = useState<string | null>(null);
   const [userIsConnected, setUserIsConnected] = useState(false);
+  const [userRoomID, setUserRoomID] = useState("");
   const router = useRouter();
   const userInfoToken = decodeToken();
+  const overflowRef = useRef(null);
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem("token");
@@ -82,6 +90,26 @@ export default function Page() {
     fetchUserLists();
   }, [token]);
 
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (currentRoom) {
+        const fetchedMessages = await getMessageService(
+          token,
+          userInfoToken!.id,
+          userRoomID
+        );
+        const extractedMessages = fetchedMessages.flatMap(
+          (user: any) => user.messages
+        );
+        if (extractedMessages.length > 0) {
+          setMessages(extractedMessages);
+        }
+      }
+    };
+
+    fetchMessages();
+  }, [currentRoom]);
+
   if (error) {
     return <div>{error}</div>;
   }
@@ -92,7 +120,7 @@ export default function Page() {
     setMessage(event.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log(`Current room: ${currentRoom}`);
     if (currentRoom && message.trim() !== "") {
       const newMessage = {
@@ -104,6 +132,14 @@ export default function Page() {
       };
 
       socketInstance.emit("new-message", currentRoom, newMessage);
+      await postMessageService(
+        token,
+        userInfoToken!.userName,
+        userInfoToken!.userEmail,
+        userInfoToken!.id,
+        userRoomID,
+        message
+      );
       console.log("Message sent", newMessage);
       setMessage("");
     } else {
@@ -142,6 +178,7 @@ export default function Page() {
                     className="bg-[#CDE6F5] w-10/12 h-[75px] rounded-[20px] mt-[20px] hover:cursor-pointer"
                     key={index}
                     onClick={() => {
+                      setUserRoomID(userList._id);
                       setUserRoom(userList.name!);
                       setUserIsConnected(socketInstance.active);
                       joinRoom(userList.email!);
@@ -169,15 +206,32 @@ export default function Page() {
               <section className="bg-[#F5F5F5] h-[599px] rounded-br-[20px] flex flex-col justify-end">
                 {currentRoom ? (
                   <>
-                    <div className="overflow-auto">
-                      {messages.map((message, index) => (
-                        <Message
-                          key={index}
-                          isOwner={message.userID === userInfoToken?.id}
-                          text={message.text}
-                        />
-                      ))}
+                    <div className="overflow-auto flex flex-col-reverse" ref={overflowRef}>
+                      <div className="">
+                        {messages.map((message, index) => (
+                          <div
+                            key={index}
+                            // className={`flex justify-${
+                            //   message.sendToID === userInfoToken?.userEmail
+                            //     ? "end"
+                            //     : "start"
+                            // }`}
+                            className={`flex ${
+                              message.email === userInfoToken?.userEmail
+                                ? "justify-end"
+                                : "justify-start"
+                            }`}
+                          >
+                            <Message
+                              isOwner={message.email === userInfoToken?.userEmail ?? true}
+                              text={message.text}
+                              // time={message.timestamp}
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
+
                     <div className="relative w-full flex justify-center mb-4">
                       <textarea
                         onChange={handleChangeTextArea}
