@@ -11,7 +11,6 @@ import usersService from "../api/services/users.Service";
 import UserNav from "../components/UserNav/UserNav";
 import NavMsg from "../components/NavMsg/NavMsg";
 import postMessageService from "../api/services/postMessage.Service";
-import tokenVerify from "../api/middleware/tokenVerify";
 import getMessageService from "../api/services/getMessage.Service";
 
 interface IMessage {
@@ -48,13 +47,12 @@ export default function Page() {
   const overflowRef = useRef(null);
 
   useEffect(() => {
-    tokenVerify();
     const storedToken = sessionStorage.getItem("token");
 
-    // if (!storedToken) {
-    //   router.push("/");
-    //   return;
-    // }
+    if (!storedToken) {
+      router.push("/");
+      return;
+    }
 
     setToken(storedToken);
 
