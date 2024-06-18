@@ -3,16 +3,13 @@
 
 Este repositório contém o desafio de programação proposto para a vaga de Desenvolvedor Backend Pleno na IXC Soft. O objetivo deste desafio é avaliar suas habilidades técnicas e conhecimentos em desenvolvimento de software, especialmente voltados para o backend.
 
-### Descrição do Desafio
-O desafio consiste em desenvolver uma aplicação Full-Stack utilizando NodeJS Express e React/NextJS, que seja capaz de realizar as seguintes funcionalidades:
-
-
-
-
 ## Considerações sobre o desafio
 * O prazo para entrega da solução é de 3 dias corridos, contados a partir da data de recebimento do desafio.
 * Utilização das seguintes linguagens NodeJS Express e React/NextJS
 
+
+## Descrição do Desafio
+O desafio consiste em desenvolver uma aplicação Full-Stack utilizando NodeJS Express e React/NextJS, que seja capaz de realizar as seguintes funcionalidades:
 
 ## Funcionalidades
 
