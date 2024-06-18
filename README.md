@@ -45,7 +45,7 @@ Inserir o IP Local com a porta do serviço back-end que estara rodando localment
 
 O que você aprendeu construindo esse projeto? Quais desafios você enfrentou e como você superou-os?
 
-Nesse projeto consegui melhorar a minha skil de front-end, no sentindo de ser um desafio trabalhar com o front. Nesse Projeto consegui melhorar na utilização do NextJS, também na utilização de roteamento de rotas dele, no react consegui trabalhar na parte de hooks, states e useEffect, por mais que seja um framework front-end com varias lib's prontas para uso, também consegui desenvolver na parte de websocket, utilizando Socket.IO, nunca havia trabalhado com ele, foi um tremendo desafio, fiquei preso na mesma função por mais de 1 dia, por não ter o conhecimento necessario para utilizar ele da melhor maneira
+Nesse projeto consegui melhorar a minha skil de front-end, no sentindo de ser um desafio trabalhar com o front. Nesse Projeto consegui melhorar na utilização do NextJS, também na utilização de roteamento de rotas dele, no react consegui trabalhar na parte de hooks, states e useEffect, por mais que seja um framework front-end com varias lib's prontas para uso, também consegui desenvolver na parte de websocket, utilizando Socket.IO, nunca havia trabalhado com ele, foi um tremendo desafio, fiquei preso na mesma função por mais de 1 dia, por não ter o conhecimento necessario para utilizar ele da melhor maneira. Quando Iniciei o projeto eu havia começado o back-end e o front-end no mesmo repositorio, mas para facilitar na hora da manutenção e deploy, resolvi alterar e deixar cada um em seu proprio repositorio.
 ## Stack utilizada
 
 **Front-end:** React, NextJS, TailwindCSS
