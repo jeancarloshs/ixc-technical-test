@@ -49,7 +49,7 @@ export default function Page() {
 
   useEffect(() => {
     tokenVerify();
-    // const storedToken = sessionStorage.getItem("token");
+    const storedToken = sessionStorage.getItem("token");
 
     // if (!storedToken) {
     //   router.push("/");
