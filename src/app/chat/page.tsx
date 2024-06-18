@@ -48,12 +48,13 @@ export default function Page() {
   const overflowRef = useRef(null);
 
   useEffect(() => {
-    const storedToken = sessionStorage.getItem("token");
+    tokenVerify();
+    // const storedToken = sessionStorage.getItem("token");
 
-    if (!storedToken) {
-      router.push("/");
-      return;
-    }
+    // if (!storedToken) {
+    //   router.push("/");
+    //   return;
+    // }
 
     setToken(storedToken);
 
