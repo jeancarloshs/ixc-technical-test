@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 export interface DecodedToken {
   userID: number;
@@ -10,18 +9,25 @@ export interface DecodedToken {
 }
 
 export default function decodeToken() {
-  const token: any = Cookies.get("token");
-
-  const decodeToken: DecodedToken = jwtDecode(token);
-
   try {
+    const token = Cookies.get("token");
+
+    if (!token || typeof token !== "string") {
+      console.error("Token inválido ou ausente");
+      return null; 
+    }
+
+    const decodeToken: DecodedToken = jwtDecode(token);
+
     const userInfo = {
       id: decodeToken.userID,
       userName: decodeToken.name,
       userEmail: decodeToken.email,
     };
+
     return userInfo;
   } catch (error) {
-    console.error("ERROR: ", error);
+    console.error("Erro ao decodificar o token: ", error);
+    return null; 
   }
 }
