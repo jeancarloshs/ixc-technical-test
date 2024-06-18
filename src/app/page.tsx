@@ -21,7 +21,7 @@ export default function Home() {
   useEffect(() => {
     const storedStayConnected = Cookies.get("stayConnected");
     if (storedStayConnected == null || storedStayConnected == undefined) {
-      sessionStorage.setItem("stayConnected", false.toString());
+      Cookies.set("stayConnected", false.toString());
     }
   }, []);
 
@@ -39,7 +39,7 @@ export default function Home() {
       );
 
       if (loginResponse.message != 'Invalid email or password') {
-        sessionStorage.setItem("token", loginResponse.objAuth.token);
+        Cookies.set("token", loginResponse.objAuth.token);
         // console.log("Login clicked with:", loginResponse.objAuth.token);
         router.push("./chat");
       } else {
@@ -56,7 +56,7 @@ export default function Home() {
 
   const handleStayConnected = (event: ChangeEvent<HTMLInputElement>) => {
     setStayConnected(!event.target.checked);
-    sessionStorage.setItem("stayConnected", stayConnected.toString());
+    Cookies.set("stayConnected", stayConnected.toString());
     console.log(stayConnected);
   };
 

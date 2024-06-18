@@ -10,7 +10,7 @@ export interface DecodedToken {
 }
 
 export default function decodeToken() {
-  const token = Cookies.get("token") as string;
+  const token: any = Cookies.get("token");
 
   const decodeToken: DecodedToken = jwtDecode(token);
 
